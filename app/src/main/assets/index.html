@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MeowLingo</title>
+<style>
+:root{--bg:#0b1020;--card:#151d33;--card2:#0f172a;--text:#f8fafc;--muted:#a7b1c8;--line:#2b3658;--pink:#fb7185;--blue:#60a5fa}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#30172c 0,transparent 28%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+.wrap{max-width:900px;margin:auto;padding:22px 16px 48px}header{display:flex;gap:12px;align-items:center;margin-bottom:18px}.logo{width:52px;height:52px;border-radius:17px;display:grid;place-items:center;font-size:28px;background:linear-gradient(135deg,#ff7ab6,#fbbf24)}h1{margin:0}.sub{color:var(--muted);font-size:13px;margin-top:3px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}.tab,.btn,.chip{border:0;color:white;font-weight:800;cursor:pointer}.tab{padding:13px;border-radius:14px;background:#111a30;border:1px solid var(--line);color:var(--muted)}.tab.active{background:#263252;color:white}
+.screen{display:none}.screen.active{display:block}.card{padding:18px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,#1a2440,var(--card));box-shadow:0 18px 60px #0006}.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.big{font-size:clamp(30px,7vw,64px);font-weight:900;margin:6px 0}.muted{color:var(--muted);line-height:1.55}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.btn{padding:12px 15px;border-radius:14px;background:#2a375b}.btn.primary{background:linear-gradient(135deg,#ff7ab6,var(--pink))}.btn:disabled{opacity:.45}.result{margin-top:15px;padding:15px;border:1px solid var(--line);border-radius:17px;background:var(--card2)}.meaning{font-size:22px;font-weight:900}
+.orb{min-height:230px;display:grid;place-items:center;border-radius:18px;border:1px solid var(--line);background:radial-gradient(circle,#48233b,transparent 52%),#0d1529;font-size:100px}.orb.on{animation:pulse 1s infinite alternate}@keyframes pulse{to{filter:brightness(1.3);transform:scale(1.02)}}
+.meters{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.meter{padding:10px;border-radius:13px;background:#111a30;border:1px solid var(--line)}.meter b{display:block}.meter small{color:var(--muted)}
+textarea{width:100%;min-height:130px;background:#0e1528;color:white;border:1px solid var(--line);border-radius:15px;padding:13px;font:inherit}.translation,.library{display:grid;grid-template-columns:1fr 1fr;gap:12px}.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.chip{padding:8px 10px;border-radius:999px;background:#111a30;border:1px solid var(--line)}
+.catline{font-size:30px;font-weight:900;margin:10px 0}.sample{padding:14px;border-radius:16px;background:#10172a;border:1px solid var(--line)}.sample p{color:var(--muted)}.notice{font-size:13px;color:#c7d2ea;margin-top:14px;line-height:1.5}
+@media(max-width:720px){.tabs,.hero,.translation,.library,.meters{grid-template-columns:1fr}}
+</style>
+</head>
+<body><div class="wrap">
+<header><div class="logo">🐾</div><div><h1>MeowLingo</h1><div class="sub">“Phiên dịch” người ↔ mèo theo kiểu vui, có đo tín hiệu thật.</div></div></header>
+<div class="tabs">
+<button class="tab active" data-tab="cat2human">🐱 Mèo → Người</button>
+<button class="tab" data-tab="human2cat">🗣️ Người → Mèo</button>
+<button class="tab" data-tab="library">🎵 Mẫu tiếng mèo</button>
+</div>
+
+<section class="screen active" id="cat2human"><div class="card hero"><div>
+<div class="big">Boss đang nói gì?</div>
+<p class="muted">Bấm nghe, để mèo kêu gần micro khoảng 1–4 giây. App đo âm lượng, cao độ nổi trội và thời lượng rồi đưa ra phỏng đoán.</p>
+<div class="actions"><button id="listen" class="btn primary">🎙️ Bắt đầu nghe</button><button id="stop" class="btn" disabled>⏹ Dừng</button></div>
+<div class="result"><div class="meaning" id="meaning">Chưa nghe tiếng mèo.</div><p class="muted" id="why">Mẹo: thu ở chỗ ít tiếng quạt, TV hoặc xe cộ.</p>
+<div class="meters"><div class="meter"><b id="pitch">—</b><small>Cao độ</small></div><div class="meter"><b id="volume">—</b><small>Âm lượng</small></div><div class="meter"><b id="duration">—</b><small>Thời lượng</small></div></div></div>
+</div><div class="orb" id="orb">🐈</div></div></section>
+
+<section class="screen" id="human2cat"><div class="card translation"><div>
+<h2>Nói điều ngài muốn boss hiểu</h2><textarea id="txt" placeholder="Ví dụ: Lại đây ăn cá nè"></textarea>
+<div class="chips"><button class="chip" data-t="Lại đây">Lại đây</button><button class="chip" data-t="Ăn thôi">Ăn thôi</button><button class="chip" data-t="Ngoan nào">Ngoan nào</button><button class="chip" data-t="Không được cắn">Không cắn</button><button class="chip" data-t="Đi ngủ thôi">Đi ngủ</button></div>
+<div class="actions"><button id="translate" class="btn primary">🐾 Dịch sang mèo</button></div></div>
+<div class="result" style="margin:0"><h3>Mèo ngữ tổng hợp</h3><div id="catline" class="catline">meow…</div><div id="tone" class="muted">Chọn câu rồi bấm dịch.</div><div class="actions"><button id="play" class="btn primary">▶ Phát tiếng mèo</button></div>
+<p class="notice">Mèo không có “từ điển” tương ứng từng câu tiếng người. Phần này chuyển ý định sang các mẫu âm thanh tổng hợp để giải trí, không phải bản dịch khoa học chính xác.</p></div></div></section>
+
+<section class="screen" id="library"><div class="card"><h2>Thư viện meow</h2><div class="library" id="grid"></div></div></section>
+</div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+$$('.tab').forEach(b=>b.onclick=()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.screen').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active')});
+
+const intents=[
+ {keys:['ăn','cá','pate','đói'],name:'food',syll:['MEOW','meow','mrrp'],note:'Meow rõ + trill gọi chú ý',base:430},
+ {keys:['lại đây','đến đây','qua đây'],name:'come',syll:['mrrp','mew','mrrp'],note:'Trill ngắn, cao dần để gọi',base:520},
+ {keys:['ngoan','yêu','thương','giỏi','cưng'],name:'love',syll:['prrr','mrrp','mew'],note:'Âm mềm, nhẹ và thân thiện',base:470},
+ {keys:['không','đừng','cắn','xuống'],name:'stop',syll:['MRROW','hmm','mrrow'],note:'Âm thấp, ngắn và dứt',base:240},
+ {keys:['ngủ','im','yên','nằm'],name:'calm',syll:['mrrr','mew'],note:'Âm thấp, chậm, ít kích thích',base:300},
+ {keys:['chơi','đồ chơi','laser'],name:'play',syll:['mip','mrrp','mip'],note:'Âm ngắn, cao, nhanh',base:620}
+];
+let current={name:'friendly',syll:['mrrp','meow'],note:'Trill + meow trung tính để thu hút chú ý',base:450};
+function infer(t){t=t.toLowerCase();return intents.find(i=>i.keys.some(k=>t.includes(k)))||current}
+function translate(){current=infer($('#txt').value.trim()||'xin chào');$('#catline').textContent=current.syll.join(' · ');$('#tone').textContent=current.note}
+$('#translate').onclick=translate;$$('.chip').forEach(c=>c.onclick=()=>{$('#txt').value=c.dataset.t;translate()});
+
+let ac; const audio=()=>ac||(ac=new (window.AudioContext||window.webkitAudioContext)());
+function meow({base=450,dur=.42,shape='meow',delay=0,gain=.15}={}){
+ const a=audio(),now=a.currentTime+delay,g=a.createGain(),o=a.createOscillator(),w=a.createOscillator(),wg=a.createGain(),f=a.createBiquadFilter();
+ g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(gain,now+.035);g.gain.exponentialRampToValueAtTime(.0001,now+dur);g.connect(a.destination);
+ o.type='sawtooth';w.type='sine';w.frequency.value=24;wg.gain.value=shape==='purr'?34:18;w.connect(wg).connect(o.frequency);
+ let a1=base*.86,a2=base*1.2,a3=base*.74;if(shape==='trill'){a1=base*.9;a2=base*1.4;a3=base*1.05}if(shape==='low'){a1=base;a2=base*.82;a3=base*.72}if(shape==='chirp'){a2=base*1.65;a3=base*1.25}if(shape==='purr'){a1=base*.45;a2=base*.5;a3=base*.42}
+ o.frequency.setValueAtTime(Math.max(70,a1),now);o.frequency.exponentialRampToValueAtTime(Math.max(70,a2),now+dur*.33);o.frequency.exponentialRampToValueAtTime(Math.max(70,a3),now+dur);
+ f.type='bandpass';f.frequency.value=Math.max(250,base*2.1);f.Q.value=.8;o.connect(f).connect(g);o.start(now);w.start(now);o.stop(now+dur);w.stop(now+dur)
+}
+function playPattern(){translate();let shapes=current.name==='stop'?['low','low','meow']:current.name==='play'?['chirp','trill','chirp']:current.name==='calm'?['purr','meow']:['trill','meow','trill'];current.syll.forEach((_,i)=>meow({base:current.base+(i%2?25:-10),shape:shapes[i%shapes.length],dur:current.name==='stop'?.34:.42,delay:i*.52}))}
+$('#play').onclick=playPattern;
+
+let stream,an,src,raf,start,sum=0,count=0,max=0,psum=0,pcount=0;
+function pitch(a){const d=new Uint8Array(a.frequencyBinCount);a.getByteFrequencyData(d);let m=0,idx=0;for(let i=2;i<d.length;i++)if(d[i]>m){m=d[i];idx=i}return m>35?idx*audio().sampleRate/a.fftSize:0}
+function loop(){const d=new Uint8Array(an.fftSize);an.getByteTimeDomainData(d);let sq=0;for(const v of d){let x=(v-128)/128;sq+=x*x}let rms=Math.sqrt(sq/d.length);sum+=rms;count++;max=Math.max(max,rms);let p=pitch(an);if(p>120&&p<1800){psum+=p;pcount++}raf=requestAnimationFrame(loop)}
+function classify(p,r,d,m){if(m<.018)return['Hình như boss chưa kêu rõ.','Tín hiệu quá nhỏ, đưa micro gần hơn.'];if(d<.75&&p>600)return['“Chào / chú ý tới tui!”','Âm ngắn và cao giống chirp/trill.'];if(p<330&&d>1.1)return['“Tui không vui / thôi nha.”','Âm thấp và kéo dài giống phàn nàn/cảnh báo.'];if(r>.105&&d>.8)return['“Ê! Tui cần cái gì đó!”','Âm lớn và kéo vừa lâu có thể là kiểu đòi hỏi.'];if(p>500&&d>1.3)return['“Tui đang gọi / tìm ai đó.”','Cao độ cao và kéo dài giống meow gọi.'];if(r<.055&&p<450)return['“Ổn áp, đang khá thư giãn.”','Âm mềm và thấp thường ít khẩn cấp.'];return['“Nè, để ý tui cái.”','Mẫu meow trung tính, có thể là chào hỏi hoặc xin tương tác.']}
+$('#listen').onclick=async()=>{try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:true,autoGainControl:true}});const a=audio();if(a.state==='suspended')await a.resume();an=a.createAnalyser();an.fftSize=2048;src=a.createMediaStreamSource(stream);src.connect(an);start=performance.now();sum=count=max=psum=pcount=0;$('#orb').classList.add('on');$('#meaning').textContent='Đang nghe boss…';$('#listen').disabled=true;$('#stop').disabled=false;loop()}catch(e){alert('Không mở được micro. Hãy cấp quyền Microphone cho MeowLingo trong cài đặt Android.')}}
+$('#stop').onclick=()=>{if(!start)return;cancelAnimationFrame(raf);stream?.getTracks().forEach(t=>t.stop());src?.disconnect();let d=(performance.now()-start)/1000,r=count?sum/count:0,p=pcount?psum/pcount:0,[m,w]=classify(p,r,d,max);$('#meaning').textContent=m;$('#why').textContent=w;$('#pitch').textContent=p?Math.round(p)+' Hz':'—';$('#volume').textContent=Math.round(Math.min(100,r*650))+'%';$('#duration').textContent=d.toFixed(1)+' s';$('#orb').classList.remove('on');$('#listen').disabled=false;$('#stop').disabled=true;start=null}
+
+const samples=[
+ ['Trill thân thiện','Âm mrrp ngắn, thường dùng khi chào hoặc gọi chú ý.','trill',520,.36],
+ ['Meow xin chú ý','Meow trung bình, khá rõ.','meow',450,.5],
+ ['Meow đòi hỏi','Âm lớn hơn và kéo dài hơn.','meow',500,.85],
+ ['Mrrow cảnh báo','Âm thấp và dứt.','low',250,.5],
+ ['Chirp săn chơi','Âm rất ngắn và cao.','chirp',650,.22],
+ ['Purr mô phỏng','Rung thấp tổng hợp, không phải tiếng purr thật.','purr',190,1.2]
+];
+for(const s of samples){let e=document.createElement('div');e.className='sample';e.innerHTML='<h3>'+s[0]+'</h3><p>'+s[1]+'</p><button class="btn">▶ Nghe thử</button>';e.querySelector('button').onclick=()=>meow({shape:s[2],base:s[3],dur:s[4]});$('#grid').appendChild(e)}
+</script></body></html>
